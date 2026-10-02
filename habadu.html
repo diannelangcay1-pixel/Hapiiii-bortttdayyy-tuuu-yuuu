@@ -1,0 +1,2411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ANGELO_OS // Birthday System</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#020604;
+    color:#d9ffe8;
+    font-family:"DM Sans",sans-serif;
+    overflow-x:hidden;
+}
+
+/* =========================
+   MATRIX BACKGROUND
+========================= */
+
+.matrix{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    opacity:.12;
+    background:
+        linear-gradient(
+            90deg,
+            transparent 95%,
+            #00ff66 96%,
+            transparent 97%
+        ),
+        linear-gradient(
+            transparent 95%,
+            #00ff66 96%,
+            transparent 97%
+        );
+    background-size:42px 42px;
+    animation:matrixMove 8s linear infinite;
+}
+
+@keyframes matrixMove{
+    from{
+        background-position:0 0;
+    }
+    to{
+        background-position:42px 42px;
+    }
+}
+
+/* =========================
+   SCANLINES
+========================= */
+
+.scanlines{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    pointer-events:none;
+    background:repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.015) 0px,
+        rgba(255,255,255,.015) 1px,
+        transparent 2px,
+        transparent 4px
+    );
+}
+
+/* =========================
+   GENERAL
+========================= */
+
+.hidden{
+    display:none !important;
+}
+
+.green{
+    color:#00ff66;
+}
+
+.red{
+    color:#ff304f;
+}
+
+.mono{
+    font-family:"JetBrains Mono",monospace;
+}
+
+button{
+    font-family:"JetBrains Mono",monospace;
+}
+
+/* =========================
+   BOOT SCREEN
+========================= */
+
+#bootScreen{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.bootBox{
+    width:min(700px,100%);
+    border:1px solid #00ff66;
+    padding:30px;
+    box-shadow:
+        0 0 20px rgba(0,255,102,.2),
+        inset 0 0 30px rgba(0,255,102,.03);
+    background:#020604;
+}
+
+.bootTitle{
+    font-family:"Orbitron",sans-serif;
+    color:#00ff66;
+    font-size:clamp(25px,7vw,55px);
+    letter-spacing:5px;
+    margin-bottom:10px;
+}
+
+.bootSub{
+    font-family:"JetBrains Mono",monospace;
+    color:#7affaa;
+    margin-bottom:25px;
+}
+
+.bootLines{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px;
+    line-height:2;
+    color:#8ab99a;
+}
+
+.bootProgress{
+    margin-top:20px;
+    height:5px;
+    background:#0a2113;
+    overflow:hidden;
+}
+
+.bootProgress span{
+    display:block;
+    width:0%;
+    height:100%;
+    background:#00ff66;
+    animation:bootProgress 3s forwards;
+}
+
+@keyframes bootProgress{
+    to{
+        width:100%;
+    }
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+#loginScreen{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    position:relative;
+    z-index:10;
+}
+
+.loginBox{
+    width:min(430px,100%);
+    border:1px solid #00ff66;
+    background:rgba(2,8,5,.95);
+    padding:35px 25px;
+    box-shadow:0 0 35px rgba(0,255,102,.12);
+}
+
+.logo{
+    font-family:"Orbitron",sans-serif;
+    text-align:center;
+    font-size:30px;
+    letter-spacing:4px;
+    color:#00ff66;
+}
+
+.loginSubtitle{
+    text-align:center;
+    color:#658c73;
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;
+    margin:10px 0 30px;
+}
+
+.inputGroup{
+    margin-bottom:18px;
+}
+
+.inputGroup label{
+    display:block;
+    color:#5d9c70;
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    margin-bottom:7px;
+}
+
+.inputGroup input{
+    width:100%;
+    padding:13px;
+    border:1px solid #164d29;
+    background:#030a06;
+    color:#00ff66;
+    outline:none;
+    font-family:"JetBrains Mono",monospace;
+}
+
+.inputGroup input:focus{
+    border-color:#00ff66;
+    box-shadow:0 0 10px rgba(0,255,102,.15);
+}
+
+.loginButton{
+    width:100%;
+    padding:14px;
+    background:#00ff66;
+    color:#001507;
+    border:0;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.loginButton:hover{
+    box-shadow:0 0 20px rgba(0,255,102,.5);
+    transform:translateY(-1px);
+}
+
+.loginError{
+    text-align:center;
+    color:#ff304f;
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    margin-top:15px;
+}
+
+/* =========================
+   FAKE HACK SCREEN
+========================= */
+
+#hackScreen{
+    position:fixed;
+    inset:0;
+    z-index:4000;
+    background:#000;
+    color:#00ff66;
+    overflow:hidden;
+    display:none;
+}
+
+.hack-terminal{
+    position:absolute;
+    inset:0;
+    padding:25px;
+    font-family:"JetBrains Mono",monospace;
+    overflow:hidden;
+}
+
+.hackHeader{
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid #174c28;
+    padding-bottom:10px;
+    margin-bottom:15px;
+    color:#5cff91;
+    font-size:12px;
+}
+
+#warning{
+    font-family:"Orbitron",sans-serif;
+    color:#ff304f;
+    font-size:clamp(25px,7vw,55px);
+    text-align:center;
+    margin:15px 0 25px;
+    text-shadow:
+        0 0 10px #ff304f,
+        0 0 30px #ff304f;
+    min-height:65px;
+}
+
+#hackLines{
+    height:55vh;
+    overflow:hidden;
+    font-size:clamp(10px,2.5vw,14px);
+    line-height:1.8;
+}
+
+.hackLine{
+    opacity:0;
+    animation:lineAppear .15s forwards;
+}
+
+.hackLine.good{
+    color:#00ff66;
+}
+
+.hackLine.warn{
+    color:#ffe600;
+}
+
+.hackLine.danger{
+    color:#ff304f;
+}
+
+@keyframes lineAppear{
+    to{
+        opacity:1;
+    }
+}
+
+#progressArea{
+    position:absolute;
+    left:25px;
+    right:25px;
+    bottom:35px;
+}
+
+.progressLabel{
+    font-size:11px;
+    margin-bottom:8px;
+    color:#668d71;
+}
+
+.progressBar{
+    width:100%;
+    height:8px;
+    background:#101810;
+    border:1px solid #214c2d;
+}
+
+#progressFill{
+    width:0%;
+    height:100%;
+    background:#00ff66;
+    transition:width .3s linear;
+}
+
+#hackFinal{
+    display:none;
+    position:absolute;
+    inset:0;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    flex-direction:column;
+    background:#000;
+}
+
+#hackFinal h1{
+    font-family:"Orbitron",sans-serif;
+    font-size:clamp(30px,9vw,75px);
+    color:#00ff66;
+    text-shadow:0 0 30px rgba(0,255,102,.7);
+}
+
+#hackFinal p{
+    margin-top:12px;
+    color:#7cffaa;
+    font-family:"JetBrains Mono",monospace;
+}
+
+.redCorners{
+    position:absolute;
+    inset:15px;
+    border:2px solid transparent;
+    pointer-events:none;
+}
+
+.redCorners.active{
+    border-color:#ff304f;
+    box-shadow:
+        0 0 15px rgba(255,48,79,.5),
+        inset 0 0 15px rgba(255,48,79,.15);
+}
+
+.redAlert{
+    animation:redBlink .15s infinite alternate;
+}
+
+@keyframes redBlink{
+    from{
+        filter:none;
+    }
+    to{
+        filter:brightness(2);
+    }
+}
+
+/* =========================
+   HEAVY GLITCH
+========================= */
+
+.glitching{
+    animation:
+        screenShake .08s infinite,
+        rgbGlitch .12s infinite;
+}
+
+.super-glitch{
+    animation:
+        terminalShake .07s infinite,
+        terminalGlitch .1s infinite;
+}
+
+@keyframes screenShake{
+    0%{transform:translate(0,0);}
+    20%{transform:translate(-4px,2px);}
+    40%{transform:translate(4px,-3px);}
+    60%{transform:translate(-3px,-2px);}
+    80%{transform:translate(3px,3px);}
+    100%{transform:translate(0,0);}
+}
+
+@keyframes terminalShake{
+    0%{transform:translate(0);}
+    25%{transform:translate(-5px,3px);}
+    50%{transform:translate(5px,-4px);}
+    75%{transform:translate(-3px,-2px);}
+    100%{transform:translate(0);}
+}
+
+@keyframes rgbGlitch{
+    0%{
+        filter:none;
+    }
+    50%{
+        filter:
+            drop-shadow(4px 0 #ff003c)
+            drop-shadow(-4px 0 #00ffff);
+    }
+    100%{
+        filter:none;
+    }
+}
+
+@keyframes terminalGlitch{
+    0%{
+        filter:none;
+    }
+    40%{
+        filter:
+            drop-shadow(3px 0 #ff003c)
+            drop-shadow(-3px 0 #00ffff);
+    }
+    100%{
+        filter:none;
+    }
+}
+
+/* =========================
+   DATA STREAM
+========================= */
+
+.dataBit{
+    position:absolute;
+    color:#00ff66;
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    pointer-events:none;
+    animation:dataFall linear forwards;
+    opacity:.5;
+}
+
+@keyframes dataFall{
+    from{
+        transform:translateY(-50px);
+        opacity:0;
+    }
+    20%{
+        opacity:.7;
+    }
+    to{
+        transform:translateY(110vh);
+        opacity:0;
+    }
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+#birthdayApp{
+    display:none;
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+}
+
+.navbar{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(1,7,4,.9);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid #12391f;
+    padding:15px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.navLogo{
+    font-family:"Orbitron",sans-serif;
+    color:#00ff66;
+    font-size:16px;
+    letter-spacing:2px;
+}
+
+.navStatus{
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px;
+    color:#54a86e;
+}
+
+.navStatus span{
+    color:#00ff66;
+}
+
+.hero{
+    min-height:75vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:50px 20px;
+}
+
+.heroInner{
+    max-width:850px;
+}
+
+.smallTag{
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+    color:#4d9a63;
+    margin-bottom:20px;
+}
+
+.hero h1{
+    font-family:"Orbitron",sans-serif;
+    font-size:clamp(35px,9vw,90px);
+    line-height:1;
+    color:#e4ffed;
+    text-shadow:0 0 30px rgba(0,255,102,.2);
+}
+
+.hero h1 span{
+    color:#00ff66;
+}
+
+.heroText{
+    max-width:650px;
+    margin:25px auto;
+    color:#89ad96;
+    line-height:1.8;
+}
+
+.startButton{
+    margin-top:20px;
+    padding:14px 25px;
+    border:1px solid #00ff66;
+    background:transparent;
+    color:#00ff66;
+    cursor:pointer;
+    font-family:"JetBrains Mono",monospace;
+    transition:.2s;
+}
+
+.startButton:hover{
+    background:#00ff66;
+    color:#001507;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.dashboard{
+    width:min(1100px,92%);
+    margin:0 auto;
+    padding:40px 0 100px;
+}
+
+.sectionTitle{
+    font-family:"JetBrains Mono",monospace;
+    color:#00ff66;
+    margin-bottom:25px;
+    font-size:14px;
+}
+
+.cardGrid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.card{
+    border:1px solid #164c29;
+    background:rgba(3,12,7,.85);
+    padding:25px;
+    min-height:180px;
+    position:relative;
+    overflow:hidden;
+    transition:.25s;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+    border-color:#00ff66;
+    box-shadow:0 0 25px rgba(0,255,102,.1);
+}
+
+.cardNumber{
+    font-family:"JetBrains Mono",monospace;
+    color:#285c38;
+    font-size:11px;
+}
+
+.card h3{
+    margin:20px 0 10px;
+    color:#d9ffe4;
+    font-family:"Orbitron",sans-serif;
+    font-size:18px;
+}
+
+.card p{
+    color:#789983;
+    line-height:1.6;
+    font-size:14px;
+}
+
+.cardButton{
+    margin-top:20px;
+    border:1px solid #1e6534;
+    background:transparent;
+    color:#00ff66;
+    padding:8px 12px;
+    cursor:pointer;
+    font-family:"JetBrains Mono",monospace;
+    font-size:11px;
+}
+
+.cardButton:hover{
+    background:#00ff66;
+    color:#001507;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    background:rgba(0,0,0,.85);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.modalBox{
+    width:min(650px,100%);
+    max-height:85vh;
+    overflow:auto;
+    background:#030a06;
+    border:1px solid #00ff66;
+    padding:30px;
+    box-shadow:0 0 40px rgba(0,255,102,.2);
+}
+
+.modalBox h2{
+    font-family:"Orbitron",sans-serif;
+    color:#00ff66;
+    margin-bottom:20px;
+}
+
+.modalBox p,
+.modalBox li{
+    color:#9abda4;
+    line-height:1.8;
+}
+
+.modalBox ul{
+    padding-left:20px;
+}
+
+.closeButton{
+    float:right;
+    background:transparent;
+    border:1px solid #345b40;
+    color:#7a9e84;
+    padding:5px 10px;
+    cursor:pointer;
+}
+
+/* =========================
+   SECOND HACK
+========================= */
+
+#secondHackScreen{
+    position:fixed;
+    inset:0;
+    z-index:3000;
+    display:none;
+    background:#000;
+    color:#00ff66;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:20px;
+}
+
+.secondHackInner{
+    width:min(650px,100%);
+}
+
+.secondHackInner h1{
+    font-family:"Orbitron",sans-serif;
+    font-size:clamp(28px,8vw,65px);
+    color:#ff304f;
+}
+
+.secondHackInner p{
+    font-family:"JetBrains Mono",monospace;
+    margin-top:20px;
+    color:#8dba99;
+}
+
+.secondProgress{
+    height:7px;
+    background:#111;
+    margin-top:30px;
+}
+
+.secondProgress span{
+    display:block;
+    width:0;
+    height:100%;
+    background:#00ff66;
+}
+
+/* =========================
+   LETTER
+========================= */
+
+.letterSection{
+    width:min(900px,92%);
+    margin:0 auto;
+    padding:80px 0;
+    display:none;
+}
+
+.envelope{
+    width:min(700px,100%);
+    margin:auto;
+    border:1px solid #225e34;
+    background:#07130b;
+    padding:35px;
+    box-shadow:0 0 30px rgba(0,255,102,.08);
+}
+
+.envelopeTop{
+    text-align:center;
+    font-family:"JetBrains Mono",monospace;
+    color:#4d9b61;
+    font-size:11px;
+    margin-bottom:25px;
+}
+
+.envelope h2{
+    text-align:center;
+    font-family:"Orbitron",sans-serif;
+    color:#00ff66;
+    margin-bottom:25px;
+}
+
+.letterText{
+    color:#a6c8af;
+    line-height:1.9;
+    font-size:15px;
+    white-space:pre-line;
+}
+
+.letterButton{
+    display:block;
+    margin:30px auto 0;
+    padding:13px 22px;
+    background:#00ff66;
+    border:none;
+    color:#001507;
+    cursor:pointer;
+    font-family:"JetBrains Mono",monospace;
+    font-weight:bold;
+}
+
+/* =========================
+   FINAL
+========================= */
+
+#finalScreen{
+    min-height:100vh;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(0,255,102,.1),
+            transparent 55%
+        );
+}
+
+.finalInner{
+    max-width:800px;
+}
+
+.finalInner .tiny{
+    font-family:"JetBrains Mono",monospace;
+    color:#559765;
+    font-size:12px;
+    margin-bottom:20px;
+}
+
+.finalInner h1{
+    font-family:"Orbitron",sans-serif;
+    font-size:clamp(45px,12vw,110px);
+    color:#00ff66;
+    text-shadow:0 0 35px rgba(0,255,102,.4);
+}
+
+.finalInner h2{
+    margin-top:15px;
+    color:#dfffe8;
+    font-weight:500;
+}
+
+.finalHeart{
+    font-size:45px;
+    margin-top:30px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    .cardGrid{
+        grid-template-columns:1fr;
+    }
+
+    .bootBox{
+        padding:22px;
+    }
+
+    .hack-terminal{
+        padding:15px;
+    }
+
+    #progressArea{
+        left:15px;
+        right:15px;
+        bottom:20px;
+    }
+
+    #hackLines{
+        height:58vh;
+    }
+
+    .letterText{
+        font-size:14px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="matrix"></div>
+<div class="scanlines"></div>
+
+
+<!-- =========================
+     BOOT SCREEN
+========================= -->
+
+<section id="bootScreen">
+
+    <div class="bootBox">
+
+        <div class="bootTitle">
+            ANGELO_OS
+        </div>
+
+        <div class="bootSub">
+            BIRTHDAY EDITION // v17.0
+        </div>
+
+        <div class="bootLines">
+            [SYSTEM] Initializing birthday protocol...<br>
+            [SYSTEM] Loading memories...<br>
+            [SYSTEM] Checking important person database...<br>
+            [SYSTEM] Subject found: ANGELO<br>
+            [SYSTEM] Preparing something special...<br>
+            [SYSTEM] Please wait...
+        </div>
+
+        <div class="bootProgress">
+            <span></span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     LOGIN
+========================= -->
+
+<section id="loginScreen" class="hidden">
+
+    <div class="loginBox">
+
+        <div class="logo">
+            ANGELO_OS
+        </div>
+
+        <div class="loginSubtitle">
+            SECURE BIRTHDAY ACCESS
+        </div>
+
+        <div class="inputGroup">
+
+            <label>USERNAME</label>
+
+            <input
+                id="username"
+                type="text"
+                placeholder="enter username"
+                autocomplete="off"
+            >
+
+        </div>
+
+        <div class="inputGroup">
+
+            <label>PASSWORD</label>
+
+            <input
+                id="password"
+                type="password"
+                placeholder="enter password"
+            >
+
+        </div>
+
+        <button
+            class="loginButton"
+            onclick="login()"
+        >
+            ACCESS SYSTEM
+        </button>
+
+        <div
+            id="loginError"
+            class="loginError"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FAKE HACK SCREEN
+========================= -->
+
+<section id="hackScreen">
+
+    <div class="hack-terminal">
+
+        <div class="hackHeader">
+
+            <span>
+                ANGELO_OS // SECURITY MONITOR
+            </span>
+
+            <span>
+                STATUS:
+                <b id="hackStatus">ACTIVE</b>
+            </span>
+
+        </div>
+
+        <div id="warning">
+            SYSTEM CHECK
+        </div>
+
+        <div id="hackLines"></div>
+
+        <div id="progressArea">
+
+            <div class="progressLabel">
+                SYSTEM PROCESS
+            </div>
+
+            <div class="progressBar">
+                <div id="progressFill"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div
+        id="redCorners"
+        class="redCorners"
+    ></div>
+
+
+    <div id="hackFinal">
+
+        <h1>
+            JUST KIDDING.
+        </h1>
+
+        <p>
+            no actual system was hacked 🤍
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     BIRTHDAY APP
+========================= -->
+
+<main id="birthdayApp">
+
+    <nav class="navbar">
+
+        <div class="navLogo">
+            ANGELO_OS
+        </div>
+
+        <div class="navStatus">
+            SYSTEM:
+            <span>ONLINE</span>
+        </div>
+
+    </nav>
+
+
+    <section class="hero">
+
+        <div class="heroInner">
+
+            <div class="smallTag">
+                // BIRTHDAY PROTOCOL INITIALIZED
+            </div>
+
+            <h1>
+                HAPPY<br>
+                <span>17TH</span>
+            </h1>
+
+            <p class="heroText">
+                Welcome to a little corner of the internet
+                made especially for you.
+                This isn't a normal birthday greeting.
+            </p>
+
+            <button
+                class="startButton"
+                onclick="scrollToDashboard()"
+            >
+                ENTER BIRTHDAY SYSTEM →
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         DASHBOARD
+    ========================= -->
+
+    <section
+        class="dashboard"
+        id="dashboard"
+    >
+
+        <div class="sectionTitle">
+            // PERSONAL FILES // ANGELO
+        </div>
+
+        <div class="cardGrid">
+
+
+            <div class="card">
+
+                <div class="cardNumber">
+                    FILE_01
+                </div>
+
+                <h3>
+                    Birthday Stats
+                </h3>
+
+                <p>
+                    AGE: 17<br>
+                    STATUS: SPECIAL PERSON<br>
+                    SYSTEM ROLE: SOMEONE IMPORTANT
+                </p>
+
+            </div>
+
+
+                        <div class="card">
+
+                <div class="cardNumber">
+                    FILE_02
+                </div>
+
+                <h3>
+                    Things I Notice
+                </h3>
+
+                <p>
+                    The patience, effort, kindness,
+                    and little things you do that
+                    you probably don't even realize
+                    I notice.
+                </p>
+
+                <button
+                    class="cardButton"
+                    onclick="openNotice()"
+                >
+                    OPEN FILE
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="cardNumber">
+                    FILE_03
+                </div>
+
+                <h3>
+                    Prayer.exe
+                </h3>
+
+                <p>
+                    A small prayer for the person
+                    celebrating another year of life.
+                </p>
+
+                <button
+                    class="cardButton"
+                    onclick="openPrayer()"
+                >
+                    RUN PRAYER.EXE
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="cardNumber">
+                    FILE_04
+                </div>
+
+                <h3>
+                    Personality.exe
+                </h3>
+
+                <p>
+                    Some observations from someone
+                    who has gotten to know you
+                    for almost 10 months.
+                </p>
+
+                <button
+                    class="cardButton"
+                    onclick="openPersonality()"
+                >
+                    ANALYZE
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="cardNumber">
+                    FILE_05
+                </div>
+
+                <h3>
+                    Something Is Wrong...
+                </h3>
+
+                <p>
+                    WARNING: SYSTEM HAS DETECTED
+                    AN UNEXPECTED AMOUNT OF
+                    BIRTHDAY FEELINGS.
+                </p>
+
+                <button
+                    class="cardButton"
+                    onclick="secondHack()"
+                >
+                    INVESTIGATE
+                </button>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="cardNumber">
+                    FILE_06
+                </div>
+
+                <h3>
+                    Birthday Message
+                </h3>
+
+                <p>
+                    There is one more file here.
+                    This one took much longer
+                    to write.
+                </p>
+
+                <button
+                    class="cardButton"
+                    onclick="openLetter()"
+                >
+                    OPEN MESSAGE
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         LETTER
+    ========================= -->
+
+    <section
+        id="letterSection"
+        class="letterSection"
+    >
+
+        <div class="envelope">
+
+            <div class="envelopeTop">
+                MESSAGE_PROTOCOL // PRIVATE
+            </div>
+
+            <h2>
+                FOR ANGELO 🤍
+            </h2>
+
+            <div
+                id="letterText"
+                class="letterText"
+            ></div>
+
+            <button
+                id="finishLetterButton"
+                class="letterButton"
+                onclick="finishLetter()"
+                style="display:none;"
+            >
+                CONTINUE →
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FINAL
+    ========================= -->
+
+    <section id="finalScreen">
+
+        <div class="finalInner">
+
+            <div class="tiny">
+                SYSTEM MESSAGE // FINAL OUTPUT
+            </div>
+
+            <h1>
+                HAPPY 17TH
+            </h1>
+
+            <h2>
+                Angelo 🤍
+            </h2>
+
+            <div class="finalHeart">
+                ♡
+            </div>
+
+            <p
+                style="
+                margin-top:25px;
+                color:#6d9d79;
+                font-family:'JetBrains Mono',monospace;
+                "
+            >
+                May God continue to bless,
+                guide, and protect you.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================
+     MODALS
+========================= -->
+
+<div
+    id="modal"
+    class="modal"
+    onclick="closeModal(event)"
+>
+
+    <div
+        class="modalBox"
+        onclick="event.stopPropagation()"
+    >
+
+        <button
+            class="closeButton"
+            onclick="closeModal()"
+        >
+            X
+        </button>
+
+        <h2 id="modalTitle"></h2>
+
+        <div id="modalContent"></div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     SECOND HACK
+========================= -->
+
+<div id="secondHackScreen">
+
+    <div class="secondHackInner">
+
+        <h1 id="secondHackTitle">
+            WARNING
+        </h1>
+
+        <p id="secondHackText">
+            unexpected birthday emotions detected...
+        </p>
+
+        <div class="secondProgress">
+            <span id="secondProgressFill"></span>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   BOOT
+===================================================== */
+
+setTimeout(() => {
+
+    document.getElementById("bootScreen")
+        .style.display = "none";
+
+    document.getElementById("loginScreen")
+        .classList.remove("hidden");
+
+}, 3500);
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function sleep(ms){
+
+    return new Promise(resolve => {
+
+        setTimeout(resolve, ms);
+
+    });
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function login(){
+
+    const username =
+        document.getElementById("username")
+        .value
+        .trim();
+
+    const password =
+        document.getElementById("password")
+        .value
+        .trim();
+
+    const error =
+        document.getElementById("loginError");
+
+
+    if(
+        username.toLowerCase() === "angelo" &&
+        password.length > 0
+    ){
+
+        error.textContent = "";
+
+        document.getElementById("loginScreen")
+            .style.display = "none";
+
+        document.getElementById("hackScreen")
+            .style.display = "block";
+
+        runExtremeHack(username);
+
+    }else{
+
+        error.textContent =
+            "ACCESS DENIED // TRY USERNAME: ANGELO";
+
+    }
+
+}
+
+
+/* =====================================================
+   HACK DATA
+===================================================== */
+
+const hackMessages = [
+
+    ["[BOOT] Initializing unauthorized birthday protocol...","warn"],
+    ["[SCAN] Searching birthday files...","good"],
+    ["[SCAN] Subject detected.","good"],
+    ["[SYSTEM] ANGELO found.","good"],
+    ["[SECURITY] Checking access permissions...","warn"],
+    ["[FIREWALL] Unauthorized emotional activity detected.","danger"],
+    ["[SCAN] Attempting to identify source...","good"],
+    ["[SYSTEM] Source unknown.","warn"],
+    ["[TRACE] Following suspicious birthday signal...","good"],
+    ["[TRACE] Signal getting stronger...","good"],
+    ["[FIREWALL] Secondary protection activated.","danger"],
+    ["[SYSTEM] Protection bypass attempt detected.","danger"],
+    ["[SCAN] Birthday memories detected.","good"],
+    ["[MEMORY] Loading almost-10-month archive...","good"],
+    ["[MEMORY] Patience.exe found.","good"],
+    ["[MEMORY] Comfort.exe found.","good"],
+    ["[MEMORY] Understanding.exe found.","good"],
+    ["[SYSTEM] Too many wholesome files detected.","warn"],
+    ["[SECURITY] This is getting suspicious.","danger"],
+    ["[SCAN] Searching for birthday target...","good"],
+    ["[TARGET] ANGELO // CONFIRMED.","danger"],
+    ["[SYSTEM] Emotional firewall failing...","danger"],
+    ["[SYSTEM] Attempting emergency shutdown...","warn"],
+    ["[ERROR] Shutdown failed.","danger"],
+    ["[ERROR] Birthday feelings cannot be deleted.","danger"],
+    ["[SECURITY] System vulnerability detected.","danger"],
+    ["[WARNING] Something very suspicious is happening.","warn"],
+    ["[WARNING] Prepare for final protocol.","danger"],
+    ["[SYSTEM] 15 SECOND SECURITY PHASE COMPLETE.","good"],
+    ["[SYSTEM] Switching to final visual sequence...","good"],
+    ["[SCAN] Verifying birthday access...","good"],
+    ["[SYSTEM] ACCESS GRANTED.","good"],
+    ["[SYSTEM] Root birthday privileges enabled.","danger"],
+    ["[SYSTEM] Loading final message...","good"],
+    ["[MEMORY] Loading gratitude...","good"],
+    ["[MEMORY] Loading prayers...","good"],
+    ["[MEMORY] Loading appreciation...","good"],
+    ["[SECURITY] SYSTEM COMPROMISED BY BIRTHDAY LOVE.","danger"],
+    ["[SYSTEM] Final message ready.","good"],
+    ["[SYSTEM] Almost there...","warn"],
+    ["[SYSTEM] HAPPY BIRTHDAY PROTOCOL COMPLETE.","good"],
+    ["[SYSTEM] Redirecting...","good"]
+
+];
+
+
+/* =====================================================
+   HACK LINE
+===================================================== */
+
+function addHackLine(message,type){
+
+    const container =
+        document.getElementById("hackLines");
+
+    const line =
+        document.createElement("div");
+
+    line.className =
+        "hackLine " + (type || "good");
+
+    line.textContent = message;
+
+    container.appendChild(line);
+
+    while(container.children.length > 28){
+
+        container.removeChild(
+            container.firstChild
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   WARNING
+===================================================== */
+
+function showHackWarning(text){
+
+    document.getElementById("warning")
+        .textContent = text;
+
+}
+
+
+/* =====================================================
+   CORNERS
+===================================================== */
+
+function activateCorners(){
+
+    document.getElementById("redCorners")
+        .classList.add("active");
+
+}
+
+
+/* =====================================================
+   DATA STREAM
+===================================================== */
+
+let dataStreamTimer = null;
+
+function startDataStream(){
+
+    if(dataStreamTimer) return;
+
+    dataStreamTimer =
+        setInterval(createDataStream,100);
+
+}
+
+
+function stopDataStream(){
+
+    if(dataStreamTimer){
+
+        clearInterval(dataStreamTimer);
+
+        dataStreamTimer = null;
+
+    }
+
+}
+
+
+function createDataStream(){
+
+    const bit =
+        document.createElement("div");
+
+    bit.className = "dataBit";
+
+    bit.textContent =
+        Math.random()
+        .toString(16)
+        .substring(2,12)
+        .toUpperCase();
+
+    bit.style.left =
+        Math.random() * 100 + "%";
+
+    bit.style.animationDuration =
+        (1 + Math.random() * 2) + "s";
+
+    document.getElementById("hackScreen")
+        .appendChild(bit);
+
+    setTimeout(() => {
+
+        bit.remove();
+
+    },3500);
+
+}
+
+
+/* =====================================================
+   DATA BURST
+===================================================== */
+
+function createDataBurst(){
+
+    for(let i = 0; i < 18; i++){
+
+        setTimeout(() => {
+
+            createDataStream();
+
+        },i * 20);
+
+    }
+
+}
+
+
+/* =====================================================
+   MAJOR GLITCH
+===================================================== */
+
+function triggerMajorGlitch(){
+
+    const hack =
+        document.getElementById("hackScreen");
+
+    hack.classList.add("redAlert");
+
+    setTimeout(() => {
+
+        hack.classList.remove("redAlert");
+
+    },350);
+
+}
+
+
+/* =====================================================
+   FAKE EXTRACTION
+===================================================== */
+
+function startFakeExtraction(){
+
+    const fill =
+        document.getElementById("progressFill");
+
+    fill.style.width = "0%";
+
+    let progress = 0;
+
+    const timer =
+        setInterval(() => {
+
+            progress += 8;
+
+            if(progress >= 100){
+
+                progress = 100;
+
+                clearInterval(timer);
+
+            }
+
+            fill.style.width =
+                progress + "%";
+
+        },120);
+
+}
+
+
+/* =====================================================
+   MAIN 20 SECOND HACK
+===================================================== */
+
+async function runExtremeHack(username){
+
+    const hack =
+        document.getElementById("hackScreen");
+
+    const terminal =
+        document.querySelector(".hack-terminal");
+
+
+    document.getElementById("hackLines")
+        .innerHTML = "";
+
+    document.getElementById("warning")
+        .textContent = "SYSTEM CHECK";
+
+    document.getElementById("progressFill")
+        .style.width = "0%";
+
+
+    hack.classList.add("glitching");
+    terminal.classList.add("super-glitch");
+
+    activateCorners();
+    startDataStream();
+
+    await sleep(500);
+
+    showHackWarning("UNAUTHORIZED ACCESS");
+
+    await sleep(500);
+
+
+    /* 0–15 SEC */
+
+    for(let i = 0; i < 29; i++){
+
+        const item =
+            hackMessages[i];
+
+        addHackLine(
+            item[0],
+            item[1]
+        );
+
+        const percent =
+            Math.round(
+                ((i + 1) / 29) * 75
+            );
+
+        document.getElementById(
+            "progressFill"
+        ).style.width =
+            percent + "%";
+
+
+        if(i === 5){
+
+            showHackWarning(
+                "FIREWALL DETECTED"
+            );
+
+            hack.classList.add(
+                "redAlert"
+            );
+
+        }
+
+
+        if(i === 10){
+
+            showHackWarning(
+                "INTRUSION DETECTED"
+            );
+
+            triggerMajorGlitch();
+            createDataBurst();
+
+        }
+
+
+        if(i === 15){
+
+            showHackWarning(
+                "ACCESS DENIED"
+            );
+
+            triggerMajorGlitch();
+
+        }
+
+
+        if(i === 20){
+
+            showHackWarning(
+                "SYSTEM VULNERABLE"
+            );
+
+            createDataBurst();
+
+        }
+
+
+        if(i === 25){
+
+            showHackWarning(
+                "SECURITY FAILURE"
+            );
+
+            triggerMajorGlitch();
+
+        }
+
+
+        await sleep(480);
+
+    }
+
+
+    /* STOP SHAKE AT 15 SEC */
+
+    hack.classList.remove("glitching");
+    terminal.classList.remove("super-glitch");
+    hack.classList.remove("redAlert");
+
+
+    showHackWarning(
+        "FINAL SECURITY CHECK"
+    );
+
+
+    /* 15–20 SEC BLINK ONLY */
+
+    for(let i = 29; i < hackMessages.length; i++){
+
+        const item =
+            hackMessages[i];
+
+        addHackLine(
+            item[0],
+            item[1]
+        );
+
+
+        hack.classList.add(
+            "redAlert"
+        );
+
+        await sleep(140);
+
+        hack.classList.remove(
+            "redAlert"
+        );
+
+
+        if(i === 30){
+
+            startFakeExtraction();
+
+        }
+
+
+        if(i === 32){
+
+            showHackWarning(
+                "ACCESS GRANTED"
+            );
+
+        }
+
+
+        if(i === 35){
+
+            showHackWarning(
+                "ROOT ACCESS"
+            );
+
+        }
+
+
+        if(i === 37){
+
+            showHackWarning(
+                "SYSTEM COMPROMISED"
+            );
+
+        }
+
+
+        if(i === 39){
+
+            createDataBurst();
+
+        }
+
+
+        await sleep(260);
+
+    }
+
+
+    hack.classList.remove("glitching");
+    terminal.classList.remove("super-glitch");
+    hack.classList.remove("redAlert");
+
+    stopDataStream();
+
+    document.getElementById(
+        "progressFill"
+    ).style.width = "100%";
+
+    showHackWarning(
+        "BIRTHDAY ACCESS GRANTED"
+    );
+
+    await sleep(300);
+
+    finishHack();
+
+}
+
+
+/* =====================================================
+   FINISH HACK
+===================================================== */
+
+async function finishHack(){
+
+    const final =
+        document.getElementById("hackFinal");
+
+    final.style.display = "flex";
+
+    await sleep(1800);
+
+    openBirthday();
+
+}
+
+
+/* =====================================================
+   OPEN BIRTHDAY
+===================================================== */
+
+function openBirthday(){
+
+    document.getElementById(
+        "hackScreen"
+    ).style.display = "none";
+
+    document.getElementById(
+        "birthdayApp"
+    ).style.display = "block";
+
+    window.scrollTo({
+        top:0,
+        behavior:"instant"
+    });
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function scrollToDashboard(){
+
+    document.getElementById(
+        "dashboard"
+    ).scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =====================================================
+   MODALS
+===================================================== */
+
+function openNotice(){
+
+    openModal(
+        "THINGS I NOTICE",
+        `
+        <p>
+        I notice the little things you do.
+        The way you try to make things better,
+        the way you listen, and the way you stay
+        patient even when things aren't always easy.
+        </p>
+
+        <br>
+
+        <p>
+        Maybe some of these things feel simple to you,
+        but they don't feel simple to me.
+        I appreciate them more than you probably know.
+        </p>
+        `
+    );
+
+}
+
+
+function openPrayer(){
+
+    openModal(
+        "PRAYER.EXE",
+        `
+        <p>
+        On your birthday, I pray that God continues
+        to guide you and protect you wherever you go.
+        </p>
+
+        <br>
+
+        <p>
+        May He give you good health, peace, happiness,
+        wisdom, and success. May He guide you toward
+        the dreams you're working hard for and give
+        you strength whenever life becomes difficult.
+        </p>
+
+        <br>
+
+        <p>
+        May you continue becoming the person God
+        wants you to be.
+        </p>
+        `
+    );
+
+}
+
+
+function openPersonality(){
+
+    openModal(
+        "PERSONALITY.EXE",
+        `
+        <ul>
+            <li>Patient</li>
+            <li>Understanding</li>
+            <li>Kind</li>
+            <li>Comforting</li>
+            <li>Generous</li>
+            <li>Someone who keeps trying</li>
+        </ul>
+
+        <br>
+
+        <p>
+        SYSTEM NOTE: These observations were
+        collected over almost 10 months.
+        </p>
+        `
+    );
+
+}
+
+
+function openModal(title,content){
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent = title;
+
+    document.getElementById(
+        "modalContent"
+    ).innerHTML = content;
+
+    document.getElementById(
+        "modal"
+    ).style.display = "flex";
+
+}
+
+
+function closeModal(){
+
+    document.getElementById(
+        "modal"
+    ).style.display = "none";
+
+}
+
+
+/* =====================================================
+   SECOND HACK
+===================================================== */
+
+async function secondHack(){
+
+    const screen =
+        document.getElementById(
+            "secondHackScreen"
+        );
+
+    const title =
+        document.getElementById(
+            "secondHackTitle"
+        );
+
+    const text =
+        document.getElementById(
+            "secondHackText"
+        );
+
+    const fill =
+        document.getElementById(
+            "secondProgressFill"
+        );
+
+
+    screen.style.display = "flex";
+
+    fill.style.width = "0%";
+
+    title.textContent =
+        "WARNING";
+
+    text.textContent =
+        "unexpected birthday emotions detected...";
+
+
+    await sleep(700);
+
+    title.textContent =
+        "SCANNING...";
+
+    text.textContent =
+        "checking emotional files...";
+
+
+    let progress = 0;
+
+    const timer =
+        setInterval(() => {
+
+            progress += 5;
+
+            fill.style.width =
+                progress + "%";
+
+            if(progress >= 100){
+
+                clearInterval(timer);
+
+            }
+
+        },50);
+
+
+    await sleep(1300);
+
+
+    title.textContent =
+
+          title.textContent =
+        "SYSTEM COMPROMISED";
+
+    text.textContent =
+        "birthday feelings successfully detected.";
+
+
+    await sleep(900);
+
+
+    title.textContent =
+        "ERROR";
+
+    text.textContent =
+        "Too much appreciation detected.";
+
+    fill.style.width = "100%";
+
+
+    await sleep(900);
+
+
+    title.textContent =
+        "JUST KIDDING 🤍";
+
+    text.textContent =
+        "You just found another birthday surprise.";
+
+
+    await sleep(1200);
+
+
+    screen.style.display = "none";
+
+}
+
+
+/* =====================================================
+   LETTER
+===================================================== */
+
+const birthdayLetter = `
+Happy birthday to someone who has become such a special and important person in my life. 🤍
+
+I honestly don’t know how to put everything I feel into words, pero gusto ko lang sabihin kung gaano ako ka-thankful na dumating ka sa buhay ko. Thank you for always being there for me, especially during the times na nasa lowest ako. You’ve seen me when I’m not okay, kapag sobrang dami kong iniisip, kapag overwhelmed ako, and even during the moments na hindi ko na rin maintindihan sarili ko. Pero kahit ganon, you still choose to stay.
+
+For almost 10 months, you’ve been patiently trying to understand me, kahit alam kong hindi naman ako laging madaling intindihin. May times na bigla akong nagiging distant, emotional, moody, or hindi ko ma-explain nang maayos kung ano talaga yung nararamdaman ko. Pero instead na sumuko ka, you still try to understand where I’m coming from. You listen to me, you reassure me, and you always remind me na hindi ko kailangang harapin lahat mag-isa.
+
+You’ve become someone na palagi kong nasasandalan kapag feeling ko wala na talaga akong kaya. And I hope you know how much that means to me. Baka para sa'yo simple lang yung mga ginagawa mo, pero for me, they mean so much. Yung presence mo, patience mo, and the way you continue to be there for me have helped me through so many moments na nahihirapan ako.
+
+Thank you for listening sa lahat ng rants ko, kahit minsan ang gulo-gulo ko na. Thank you for comforting me whenever I need it, and for trying to understand me kahit minsan ako mismo hindi ko maintindihan kung ano ba talaga gusto kong sabihin. Thank you for never making me feel like my feelings are too much.
+
+I also want you to know na nakikita ko lahat ng efforts mo. Maybe I don’t always say it, and sometimes hindi ko rin alam kung paano ko ipapakita, pero napapansin ko lahat. I notice how you try to make me feel better, how you stay kapag hindi ako okay, and how you continue to care for me even when I’m not at my best.
+
+And I’m really grateful for that.
+
+On your birthday, I pray that God continues to guide you and protect you wherever you go. I pray that He gives you good health, happiness, peace, and success. Sana ma-achieve mo lahat ng dreams and goals mo, and sana kahit anong mangyari, hindi mo mawala yung kindness and patience na meron ka.
+
+I hope this new chapter of your life gives you more reasons to smile, more memories to treasure, and more opportunities to grow. You deserve good things and genuine happiness.
+
+Thank you for being one of the people I can run to whenever I’m at my lowest. Thank you for being patient with me for almost 10 months and for continuously trying to understand me kahit hindi naman ako laging madaling intindihin. I’m genuinely grateful na nakilala kita and that I get to have someone like you in my life.
+
+I may not always be good at expressing how much I appreciate you, but please know that your presence means more to me than you probably realize.
+
+Happy birthday. 🤍 I hope you enjoy your day and feel how appreciated and special you are. May God continue to bless you, guide you, and give you all the happiness you deserve.
+
+Thank you for staying, for understanding me, and for being someone I can lean on whenever I feel like I have nothing left. I’m truly, genuinely grateful for you, I love you my Angelo. 🤍
+`;
+
+
+/* =====================================================
+   OPEN LETTER
+===================================================== */
+
+async function openLetter(){
+
+    const section =
+        document.getElementById(
+            "letterSection"
+        );
+
+    const text =
+        document.getElementById(
+            "letterText"
+        );
+
+    const button =
+        document.getElementById(
+            "finishLetterButton"
+        );
+
+
+    section.style.display = "flex";
+
+    text.innerHTML = "";
+
+    button.style.display = "none";
+
+
+    /*
+       TYPEWRITER EFFECT
+    */
+
+    for(let i = 0; i < birthdayLetter.length; i++){
+
+        text.textContent += birthdayLetter[i];
+
+        /*
+           Slightly slower for a more
+           personal message effect.
+        */
+
+        if(
+            birthdayLetter[i] === "." ||
+            birthdayLetter[i] === "!" ||
+            birthdayLetter[i] === "?"
+        ){
+
+            await sleep(120);
+
+        }else{
+
+            await sleep(18);
+
+        }
+
+    }
+
+
+    button.style.display = "inline-block";
+
+}
+
+
+/* =====================================================
+   FINISH LETTER
+===================================================== */
+
+async function finishLetter(){
+
+    const button =
+        document.getElementById(
+            "finishLetterButton"
+        );
+
+    button.disabled = true;
+
+    button.textContent =
+        "PROCESSING...";
+
+
+    await sleep(700);
+
+
+    document.getElementById(
+        "letterSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "finalScreen"
+    ).style.display = "flex";
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            const loginScreen =
+                document.getElementById(
+                    "loginScreen"
+                );
+
+            if(
+                loginScreen &&
+                loginScreen.style.display !== "none"
+            ){
+
+                login();
+
+            }
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+ 
